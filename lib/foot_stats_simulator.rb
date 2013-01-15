@@ -3,8 +3,14 @@ require 'foot_stats'
 
 require 'faker'
 
+require 'singleton'
+
 module FootStatsSimulator
-  def self.timelines_dir
-    File.join Rails.root, 'tmp/timelines'
+  attr_accessor :timelines_dir
+
+  include Singleton
+
+  def self.method_missing(method_name, *args, &block)
+    instance.send method_name, *args, &block
   end
 end
