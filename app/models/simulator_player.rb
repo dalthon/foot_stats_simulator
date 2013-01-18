@@ -19,7 +19,7 @@ class SimulatorPlayer < ActiveRecord::Base
       if count == 1
         self.first.to_foot_stats
       else
-        { 'Equipe' => all.map(&:to_foot_stats) }
+        { 'Jogador' => all.map(&:to_foot_stats) }
       end
     end
   end
