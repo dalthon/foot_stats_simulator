@@ -50,6 +50,7 @@ class SimulatorMatch < ActiveRecord::Base
   belongs_to :home_simulator_team,    foreign_key: 'home_team_id',    class_name: 'SimulatorTeam'
   belongs_to :visitor_simulator_team, foreign_key: 'visitor_team_id', class_name: 'SimulatorTeam'
 
+  before_create :populate_data
   after_create :update_by_timeline
 
   def home_team
@@ -66,9 +67,9 @@ class SimulatorMatch < ActiveRecord::Base
 
   def readable_status
     if status
-      SimulatorMatch::STATUS_SEQUENCE[status.to_sym]
+      SimulatorMatch::STATUS_MAP[status.to_sym]
     else
-      0
+      SimulatorMatch::STATUS_MAP[:not_started]
     end
   end
 
@@ -133,14 +134,14 @@ class SimulatorMatch < ActiveRecord::Base
         {
           "@Id"             => home_team.source_id.to_s,
           "@Nome"           => home_team.full_name,
-          "@Placar"         => " ",
+          "@Placar"         => timeline.home_score.to_s,
           "@PlacarPenaltis" => "",
           "@Tipo"           => "Mandante"
         },
         {
           "@Id"             => visitor_team.source_id.to_s,
           "@Nome"           => visitor_team.full_name,
-          "@Placar"         => " ",
+          "@Placar"         => timeline.visitor_score.to_s,
           "@PlacarPenaltis" => "",
           "@Tipo"           => "Visitante"
         }
@@ -164,8 +165,19 @@ class SimulatorMatch < ActiveRecord::Base
   end
 
   protected
+  def populate_data
+    self.timeline_random_seed    = Random.new_seed              unless self.timeline_random_seed
+    self.source_id               = self.class.dummy_source_id   unless self.source_id
+    self.home_team_name          = home_team.full_name          unless self.home_team_name
+    self.home_score              = 0                            unless self.home_score
+    self.home_penalties_score    = nil                          unless self.home_penalties_score
+    self.visitor_team_name       = visitor_team.full_name       unless self.visitor_team_name
+    self.visitor_score           = 0                            unless self.visitor_score
+    self.visitor_penalties_score = nil                          unless self.visitor_penalties_score
+  end
+
   def update_by_timeline
-    return if readable_status >= SimulatorMatch::STATUS_SEQUENCE[:finished]
+    return if status.nil? || SimulatorMatch::STATUS_SEQUENCE[status.to_sym] >= SimulatorMatch::STATUS_SEQUENCE[:finished]
     timeline.update_match
   end
 
@@ -188,7 +200,6 @@ class SimulatorMatch < ActiveRecord::Base
         home_team_id:              home_team.id,
         visitor_team_id:           visitor_team.id,
         timeline_name:             options[:timeline_name],
-        source_id:                 dummy_source_id,
         date:                      dummy_date(options[:minutes_from_now]),
         referee:                   Faker::Name.name,
         stadium:                   "Estádio #{Faker::Name.name}",
@@ -202,21 +213,13 @@ class SimulatorMatch < ActiveRecord::Base
         cup:                       '',
         group:                     '',
         game_number:               dummy_game_number(championship),
-        live:                      options[:live],
-        home_team_name:            home_team.full_name,
-        home_score:                0,
-        home_penalties_score:      nil,
-        visitor_team_name:         visitor_team.full_name,
-        visitor_score:             0,
-        visitor_penalties_score:   nil,
-        timeline_random_seed:      Random.new_seed
+        live:                      options[:live]
       }
 
       match = self.create params
       match
     end
 
-    protected
     def dummy_source_id
       source_id = rand(10000)
       if self.where(source_id: source_id).exists?
@@ -226,6 +229,7 @@ class SimulatorMatch < ActiveRecord::Base
       end
     end
 
+    protected
     def dummy_date(minutes_from_now)
       minutes_from_now.minutes.from_now
     end
