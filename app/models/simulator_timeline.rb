@@ -82,7 +82,7 @@ class SimulatorTimeline
   end
 
   def current_period_time
-    SimulatorMatch::STATUS_SEQUENCE[current_period] || current_period.to_i
+    SimulatorMatch::STATUS_SEQUENCE[current_period.to_sym] || current_period.to_i
   end
 
   protected
