@@ -1,4 +1,4 @@
-module FootStatsSimulator
+class FootStatsSimulator
   module ApplicationHelper
   end
 end

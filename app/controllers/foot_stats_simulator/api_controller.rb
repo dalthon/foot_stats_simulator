@@ -1,4 +1,4 @@
-module FootStatsSimulator
+class FootStatsSimulator
   class ApiController < ::FootStatsSimulator::ApplicationController
     skip_before_filter :verify_authenticity_token
 
