@@ -5,7 +5,7 @@ require 'faker'
 
 require 'singleton'
 
-module FootStatsSimulator
+class FootStatsSimulator
   attr_accessor :timelines_dir
 
   include Singleton
