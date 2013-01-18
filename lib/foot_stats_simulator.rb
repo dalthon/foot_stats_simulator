@@ -3,14 +3,12 @@ require 'foot_stats'
 
 require 'faker'
 
-require 'singleton'
+module FootStatsSimulator
+  def self.timelines_dir=(path)
+    @timelines_dir = path
+  end
 
-class FootStatsSimulator
-  attr_accessor :timelines_dir
-
-  include Singleton
-
-  def self.method_missing(method_name, *args, &block)
-    instance.send method_name, *args, &block
+  def self.timelines_dir
+    @timelines_dir
   end
 end
