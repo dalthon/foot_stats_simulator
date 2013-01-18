@@ -1,4 +1,4 @@
-module FootStatsSimulator
+class FootStatsSimulator
   class ApplicationController < ActionController::Base
     protected
     def render_foot_stats(data)
