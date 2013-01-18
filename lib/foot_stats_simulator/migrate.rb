@@ -35,7 +35,7 @@ ActiveRecord::Migration.create_table :simulator_matches do |t|
   t.decimal    :timeline_random_seed
 
   t.integer    :source_id
-  t.time       :date
+  t.datetime   :date
   t.string     :status
   t.string     :referee
   t.string     :stadium
