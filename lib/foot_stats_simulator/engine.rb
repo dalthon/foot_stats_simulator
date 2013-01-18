@@ -1,4 +1,4 @@
-module FootStatsSimulator
+class FootStatsSimulator
   class Engine < ::Rails::Engine
     isolate_namespace FootStatsSimulator
 
