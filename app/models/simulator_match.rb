@@ -110,6 +110,7 @@ class SimulatorMatch < ActiveRecord::Base
   end
 
   def to_foot_stats_narration
+    update_by_timeline
     {
       "Campeonato" => {
         "@Id"        => simulator_championship.source_id.to_s,
@@ -177,7 +178,7 @@ class SimulatorMatch < ActiveRecord::Base
   end
 
   def update_by_timeline
-    return if status.nil? || SimulatorMatch::STATUS_SEQUENCE[status.to_sym] >= SimulatorMatch::STATUS_SEQUENCE[:finished]
+    return if !status.nil? || SimulatorMatch::STATUS_SEQUENCE[status.to_sym] >= SimulatorMatch::STATUS_SEQUENCE[:finished]
     timeline.update_match
   end
 
